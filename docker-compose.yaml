@@ -1,0 +1,43 @@
+services:
+  docker-sandbox:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TZ: Europe/Berlin
+        CLAUDE_CODE_VERSION: latest
+        USERNAME: claude-dev
+        ZSH_IN_DOCKER_VERSION: 1.2.0
+    
+    container_name: sandbox
+    
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+    volumes:
+      # Mount current project - CHANGE PATH AS NEEDED!
+      - ~/Projects/Experiments/test-project:/workspace:rw
+      # Mound claude config configuration
+      - ~/.claude:/home/claude-dev/.claude
+
+    working_dir: /workspace
+    
+    stdin_open: true
+    tty: true
+    
+    command: >
+      bash -c "
+      sudo /usr/local/bin/init-firewall.sh &&
+      exec zsh
+      "
+
+#    # Optional: restrict ressources of container
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 4G
+#          cpus: '2.0'
+#        reservations:
+#          memory: 2G
+#          cpus: '1.0'
