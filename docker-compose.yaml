@@ -6,7 +6,7 @@ services:
       args:
         TZ: Europe/Berlin
         CLAUDE_CODE_VERSION: latest
-        USERNAME: claude-dev
+        USERNAME: developer
         ZSH_IN_DOCKER_VERSION: 1.2.0
     
     container_name: sandbox
@@ -17,9 +17,9 @@ services:
 
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
-      - ~/Projects/Experiments/test-project:/workspace:rw
-      # Mound claude config configuration
-      - ~/.claude:/home/claude-dev/.claude
+      - ~/Projects/test-project:/workspace:rw
+      # Mount claude config 
+      - ~/.claude:/home/developer/.claude
 
     working_dir: /workspace
     

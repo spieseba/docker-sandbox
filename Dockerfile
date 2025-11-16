@@ -33,7 +33,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user 
-ARG USERNAME=claude-dev
+ARG USERNAME=developer
 RUN useradd -m -s /bin/zsh ${USERNAME}
 
 # Only on Linux, when there are file permission issues
