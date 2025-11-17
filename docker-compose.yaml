@@ -7,7 +7,7 @@ services:
         TZ: Europe/Berlin
         CODEX_VERSION: latest
         GEMINI_VERSION: latest
-#        CLAUDE_CODE_VERSION: latest
+        CLAUDE_CODE_VERSION: latest
         ZSH_IN_DOCKER_VERSION: 1.2.0
     
     container_name: sandbox
@@ -19,7 +19,7 @@ services:
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
       - ~/Projects/test-project:/workspace
-      # Mount persisting configs for CLIs
+      # Mount persistent host configs for CLIs
       - ~/.codex:/home/ubuntu/.codex
       - ~/.gemini:/home/ubuntu/.gemini
       - ~/.claude:/home/ubuntu/.claude
