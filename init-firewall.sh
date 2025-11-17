@@ -70,15 +70,21 @@ while read -r cidr; do
     ipset add allowed-domains "$cidr"
 done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 
+
+
 # Resolve and add other allowed domains
 for domain in \
     "registry.npmjs.org" \
+    "api.openai.com" \
+    "chatgpt.com" \
+    "generativelanguage.googleapis.com" \
+    "accounts.google.com" \
+    "oauth2.googleapis.com" \
+    "www.googleapis.com" \
     "api.anthropic.com" \
     "sentry.io" \
     "statsig.anthropic.com" \
-    "statsig.com" \
-    "api.openai.com" \
-    "generativelanguage.googleapis.com"; do
+    "statsig.com"; do
     
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')

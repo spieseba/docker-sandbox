@@ -5,10 +5,9 @@ services:
       dockerfile: Dockerfile
       args:
         TZ: Europe/Berlin
-        CLAUDE_CODE_VERSION: latest
         CODEX_VERSION: latest
         GEMINI_VERSION: latest
-        USERNAME: developer
+#        CLAUDE_CODE_VERSION: latest
         ZSH_IN_DOCKER_VERSION: 1.2.0
     
     container_name: sandbox
@@ -16,14 +15,16 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
-
+        
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
       - ~/Projects/test-project:/workspace
-      # Mount persisting configs for all CLIs
-      - ~/.claude:/home/developer/.claude
-      - ~/.codex:/home/developer/.codex
-      - ~/.gemini:/home/developer/.gemini
+      # Mount persisting configs for CLIs
+      - ~/.codex:/home/ubuntu/.codex
+      - ~/.gemini:/home/ubuntu/.gemini
+      - ~/.claude:/home/ubuntu/.claude
+      - ~/.claude.json:/home/ubuntu/.claude.json
+      - ~/.claude.json.backup:/home/ubuntu/.claude.json.backup
 
     working_dir: /workspace
     

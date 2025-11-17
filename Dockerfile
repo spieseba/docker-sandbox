@@ -10,7 +10,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   less \
   git \
   sudo \
-  fzf \
   zsh \
   man-db \
   unzip \
@@ -35,31 +34,21 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # Install Starship as root
 RUN curl -fsSL https://starship.rs/install.sh | sh -s -- --yes
 
-# Create non-root user 
-ARG USERNAME=developer
-RUN useradd -m -s /bin/zsh ${USERNAME}
-
-# Only on Linux, when there are file permission issues
-#ARG USER_GID=1000
-#ARG USER_UID=1000
-#RUN groupadd --gid ${USER_GID} ${USERNAME} \
-#    && useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME}
-
 # Ensure user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
-  chown -R ${USERNAME}:${USERNAME} /usr/local/share
+  chown -R ubuntu:ubuntu /usr/local/share
 
 # Create workspace and set permissions
-RUN mkdir -p /workspace && chown -R ${USERNAME}:${USERNAME} /workspace
+RUN mkdir -p /workspace && chown -R ubuntu:ubuntu /workspace
 
 # Copy and configure firewall script 
 COPY init-firewall.sh /usr/local/bin/init-firewall.sh
 RUN chmod +x /usr/local/bin/init-firewall.sh \
-    && echo "${USERNAME} ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/${USERNAME}-firewall \
-    && chmod 0440 /etc/sudoers.d/${USERNAME}-firewall
+    && echo "ubuntu ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/ubuntu-firewall \
+    && chmod 0440 /etc/sudoers.d/ubuntu-firewall
 
 # Switch to non-root user
-USER ${USERNAME}
+USER ubuntu
 
 # Set working directory
 WORKDIR /workspace
@@ -82,16 +71,16 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # Initialize and configure Starship
 RUN echo 'eval "$(starship init zsh)"' >> ~/.zshrc
-RUN mkdir -p /home/${USERNAME}/.config && starship preset jetpack -o ~/.config/starship.toml
+RUN mkdir -p /home/ubuntu/.config && starship preset jetpack -o ~/.config/starship.toml
 
 # Install Claude Code, Codex, Gemini
-ARG CLAUDE_CODE_VERSION=latest
 ARG CODEX_VERSION=latest
 ARG GEMINI_VERSION=latest
+ARG CLAUDE_CODE_VERSION=latest
 
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
-    && npm install -g @openai/codex@${CODEX_VERSION} \
-    && npm install -g @google/gemini-cli@${GEMINI_VERSION}
+RUN npm install -g @openai/codex@${CODEX_VERSION} \
+    && npm install -g @google/gemini-cli@${GEMINI_VERSION} \
+    && npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
 
 # Default command
 CMD ["/bin/zsh"]
