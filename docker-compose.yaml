@@ -6,6 +6,8 @@ services:
       args:
         TZ: Europe/Berlin
         CLAUDE_CODE_VERSION: latest
+        CODEX_VERSION: latest
+        GEMINI_VERSION: latest
         USERNAME: developer
         ZSH_IN_DOCKER_VERSION: 1.2.0
     
@@ -17,9 +19,11 @@ services:
 
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
-      - ~/Projects/test-project:/workspace:rw
-      # Mount claude config 
+      - ~/Projects/test-project:/workspace
+      # Mount persisting configs for all CLIs
       - ~/.claude:/home/developer/.claude
+      - ~/.codex:/home/developer/.codex
+      - ~/.gemini:/home/developer/.gemini
 
     working_dir: /workspace
     

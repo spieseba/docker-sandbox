@@ -32,6 +32,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Starship as root
+RUN curl -fsSL https://starship.rs/install.sh | sh -s -- --yes
+
 # Create non-root user 
 ARG USERNAME=developer
 RUN useradd -m -s /bin/zsh ${USERNAME}
@@ -68,19 +71,27 @@ ENV SHELL=/bin/zsh
 ENV EDITOR=vim
 ENV VISUAL=vim
 
-# Install oh-my-zsh defaultung to powerlevel10k theme
+# Install oh-my-zsh
 ARG ZSH_IN_DOCKER_VERSION=1.2.0
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v${ZSH_IN_DOCKER_VERSION}/zsh-in-docker.sh)" -- \
+  -t "" \
   -p git \
   -p https://github.com/zsh-users/zsh-autosuggestions \
   -p https://github.com/zsh-users/zsh-syntax-highlighting \
-  -x
+  -x 
 
-# Install Claude Code CLI
+# Initialize and configure Starship
+RUN echo 'eval "$(starship init zsh)"' >> ~/.zshrc
+RUN mkdir -p /home/${USERNAME}/.config && starship preset jetpack -o ~/.config/starship.toml
+
+# Install Claude Code, Codex, Gemini
 ARG CLAUDE_CODE_VERSION=latest
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
-# Install Codex CLI
-# Install Gemini CLI
+ARG CODEX_VERSION=latest
+ARG GEMINI_VERSION=latest
+
+RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
+    && npm install -g @openai/codex@${CODEX_VERSION} \
+    && npm install -g @google/gemini-cli@${GEMINI_VERSION}
 
 # Default command
 CMD ["/bin/zsh"]
