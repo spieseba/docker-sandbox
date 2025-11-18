@@ -1,0 +1,3 @@
+# Ignore helper scripts
+./rebuild.sh
+./start.sh
