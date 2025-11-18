@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-# Claude Code Firewall Initialization Script
-# Copied from Anthropic's reference implementation
+# Firewall Initialization Script
+# Adapted from Anthropic's reference implementation
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh
 #
 
@@ -80,11 +80,11 @@ for domain in \
     "generativelanguage.googleapis.com" \
     "accounts.google.com" \
     "oauth2.googleapis.com" \
-    "www.googleapis.com" \
-    "api.anthropic.com" \
-    "sentry.io" \
-    "statsig.anthropic.com" \
-    "statsig.com"; do
+    "www.googleapis.com"; do
+#    "api.anthropic.com" \
+#    "sentry.io" \
+#    "statsig.anthropic.com" \
+#    "statsig.com"; do
     
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')
