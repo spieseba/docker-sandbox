@@ -73,19 +73,23 @@ done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 
 
 # Resolve and add other allowed domains
-for domain in \
-    "registry.npmjs.org" \
-    "api.openai.com" \
-    "chatgpt.com" \
-    "generativelanguage.googleapis.com" \
-    "accounts.google.com" \
-    "oauth2.googleapis.com" \
-    "www.googleapis.com"; do
-#    "api.anthropic.com" \
-#    "sentry.io" \
-#    "statsig.anthropic.com" \
-#    "statsig.com"; do
-    
+REQUIRED_DOMAINS=(
+    "registry.npmjs.org" 
+    "api.openai.com" 
+    "chatgpt.com" 
+    "generativelanguage.googleapis.com" 
+    "accounts.google.com" 
+    "oauth2.googleapis.com" 
+    "www.googleapis.com"
+# Claude Code
+#    "api.anthropic.com"
+#    "sentry.io" 
+#    "statsig.anthropic.com"
+#    "statsig.com"
+)
+
+for domain in "${REQUIRED_DOMAINS[@]}"; do
+
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')
     if [ -z "$ips" ]; then
