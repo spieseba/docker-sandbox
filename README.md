@@ -76,7 +76,7 @@ docker compose build
 docker compose up -d
 
 # Enter the container
-docker compose exec claude-code-sandbox zsh
+docker compose exec docker-sandbox zsh
 ```
 
 ### 4. Use AI CLIs
