@@ -18,10 +18,10 @@ services:
         
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
-      - ~/Projects/test-project:/workspace
+      - ./test-project:/workspace:rw
       # Mount persistent host configs for CLIs
-      - ~/.codex:/home/ubuntu/.codex
-      - ~/.gemini:/home/ubuntu/.gemini
+      - ~/.codex:/home/ubuntu/.codex:rw
+      - ~/.gemini:/home/ubuntu/.gemini:rw
 #      - ~/.claude:/home/ubuntu/.claude
 #      - ~/.claude.json:/home/ubuntu/.claude.json
 #      - ~/.claude.json.backup:/home/ubuntu/.claude.json.backup
