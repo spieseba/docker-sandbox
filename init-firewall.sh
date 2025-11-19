@@ -75,17 +75,18 @@ done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 # Resolve and add other allowed domains
 REQUIRED_DOMAINS=(
     "registry.npmjs.org" 
+    # Claude Code
+    #"api.anthropic.com"
+    #"sentry.io" 
+    #"statsig.anthropic.com"
+    #"statsig.com"
+    # Codex
     "api.openai.com" 
     "chatgpt.com" 
+    # Gemini
     "generativelanguage.googleapis.com" 
     "accounts.google.com" 
     "oauth2.googleapis.com" 
-    "www.googleapis.com"
-# Claude Code
-#    "api.anthropic.com"
-#    "sentry.io" 
-#    "statsig.anthropic.com"
-#    "statsig.com"
 )
 
 for domain in "${REQUIRED_DOMAINS[@]}"; do
