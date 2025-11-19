@@ -64,7 +64,7 @@ Optional: Uninstall CLIs from Host if desired but keep `~/.codex` and `~/.gemini
 
 ### 2. Clone and Setup
 ```bash
-git clone 
+git clone https://github.com/spieseba/docker-sandbox
 cd docker-sandbox
 ```
 
