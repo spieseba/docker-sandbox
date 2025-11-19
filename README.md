@@ -50,7 +50,6 @@ The firewall implements a **default-deny policy**:
 ### 1. Authenticate CLIs on Host (Linux/macOS)
 ```bash
 # Install and authenticate on your host machine first
-npm install -g @anthropic-ai/claude-code
 npm install -g @openai/codex
 npm install -g @google/gemini-cli
 
@@ -60,6 +59,8 @@ gemini
 ```
 
 This stores credentials in `~/.codex`, and `~/.gemini`.
+
+Optional: Uninstall CLIs from Host if desired but keep `~/.codex` and `~/.gemini`
 
 ### 2. Clone and Setup
 ```bash
