@@ -1,12 +1,12 @@
 # LLM CLI Development Container
 
-A largely secure and isolated Docker environment for experimenting with AI coding assistants including OpenAI Codex, Google Gemini CLI, and Claude Code.
+A largely secure and isolated Docker environment for experimenting with AI coding assistants including Claude Code, OpenAI Codex and Google Gemini CLI.
 
 ## Purpose
 This container provides a sandboxed environment to explore and test LLM-powered coding tools without compromising your host system's security. It combines filesystem isolation, network restrictions, and a comfortable zsh development environment.
 
 ## Key Features
-- **Multi-AI Support**: Pre-configured for Codex CLI and Gemini CLI. Exentsible to Claude Code.
+- **Multi-AI Support**: Pre-configured for Claude Code, Codex CLI, and Gemini CLI.
 - **Network Isolation**: Firewall-based whitelist approach (inspired by Anthropic's Claude Code devcontainer)
 - **Filesystem Isolation**: Only explicitly mounted directories are accessible
 - **Credential Management**: Secure mounting of OAuth tokens from host machine
@@ -24,6 +24,7 @@ The firewall implements a **default-deny policy**:
 1. **Allowed by default**: DNS (port 53), SSH (port 22), localhost, Docker host network
 2. **Whitelisted domains**: 
    - npm registry 
+   - Claude Code API and authentification services
    - OpenAI API and authentification services
    - Gemini API and authentification services
    - GitHub
@@ -48,6 +49,7 @@ The firewall implements a **default-deny policy**:
 ## Quick Start
 
 ### 1. Authenticate CLIs on Host (Linux/macOS)
+While it is possible to autheticate Claude Code from within the container, Codex and Gemini have to be autheticated from the host.
 ```bash
 # Install and authenticate on your host machine first
 npm install -g @openai/codex
@@ -83,11 +85,16 @@ docker compose exec docker-sandbox zsh
 ### 4. Use AI CLIs
 Inside the container:
 ```bash
+# Launch Claude Code and authenticate as prompted
+claude 
+# Test Claude Code
+claude -p "review this code"
+
 # Test Codex
 codex "explain this codebase"
 
 # Test Gemini
-gemini -p "review this code"
+gemini -p "what is the purpose of this code?"
 ```
 
 ## Configuration
@@ -113,15 +120,16 @@ Edit `init-firewall.sh` and add domains to the `REQUIRED_DOMAINS` array:
 ```bash
 REQUIRED_DOMAINS=(
     "registry.npmjs.org"
-    "api.openai.com" 
-    "chatgpt.com" 
+    # Claude Code 
+    "api.anthropic.com"
+    "sentry.io" 
     ...
     "your-domain.com"  # Add here
 )
 ```
 
 ## Platform-Specific Notes
-This setup is tested on macOS (Apple Silicon) and Linux.
+This setup is tested on macOS Tahoe (Apple Silicon) and Ubuntu 24.04.
 
 ## Security Considerations
 - The firewall provides network isolation but is not impenetrable

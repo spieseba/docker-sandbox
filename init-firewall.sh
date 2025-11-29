@@ -76,10 +76,10 @@ done < <(echo "$gh_ranges" | jq -r '(.web + .api + .git)[]' | aggregate -q)
 REQUIRED_DOMAINS=(
     "registry.npmjs.org" 
     # Claude Code
-    #"api.anthropic.com"
-    #"sentry.io" 
-    #"statsig.anthropic.com"
-    #"statsig.com"
+    "api.anthropic.com"
+    "sentry.io" 
+    "statsig.anthropic.com"
+    "statsig.com"
     # Codex
     "api.openai.com" 
     "chatgpt.com" 
