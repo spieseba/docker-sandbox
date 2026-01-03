@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
       args:
         TZ: Europe/Berlin
-        CODEX_VERSION: latest
-        GEMINI_VERSION: latest
         CLAUDE_CODE_VERSION: latest
+        CODEX_VERSION: latest
+        #GEMINI_VERSION: latest
         ZSH_IN_DOCKER_VERSION: 1.2.0
     
     container_name: sandbox
@@ -18,10 +18,16 @@ services:
         
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
-      - ./test-project:/workspace:rw
+      #- ./test-project:/workspace:rw
+      - /Users/sebastian/Projects/WebDev/Webpage:/workspace:rw
       # Mount persistent host configs for CLIs
+      ## Claude Code
+      - ~/.claude:/home/ubuntu/.claude
+      - ~/.claude.json:/home/ubuntu/.claude.json
+      ## Codex CLI
       - ~/.codex:/home/ubuntu/.codex:rw
-      - ~/.gemini:/home/ubuntu/.gemini:rw
+      ## Gemini CLI
+      #- ~/.gemini:/home/ubuntu/.gemini:rw
 
     working_dir: /workspace
     
@@ -33,13 +39,3 @@ services:
       sudo /usr/local/bin/init-firewall.sh &&
       exec zsh
       "
-
-#    # Optional: restrict ressources of container
-#    deploy:
-#      resources:
-#        limits:
-#          memory: 4G
-#          cpus: '2.0'
-#        reservations:
-#          memory: 2G
-#          cpus: '1.0'

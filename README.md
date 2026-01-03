@@ -1,15 +1,15 @@
 # LLM CLI Development Container
 
-A largely secure and isolated Docker environment for experimenting with AI coding assistants including Claude Code, OpenAI Codex and Google Gemini CLI.
+A largely secure and isolated Docker environment for experimenting with AI coding assistants including Claude Code, OpenAI Codex, and Google Gemini CLI.
 
 ## Purpose
 This container provides a sandboxed environment to explore and test LLM-powered coding tools without compromising your host system's security. It combines filesystem isolation, network restrictions, and a comfortable zsh development environment.
 
 ## Key Features
-- **Multi-AI Support**: Pre-configured for Claude Code, Codex CLI, and Gemini CLI.
+- **Multi-AI Support**: Pre-configured for Claude Code and Codex CLI. Exentsible to Gemini CLI.
 - **Network Isolation**: Firewall-based whitelist approach (inspired by Anthropic's Claude Code devcontainer)
 - **Filesystem Isolation**: Only explicitly mounted directories are accessible
-- **Credential Management**: Secure mounting of OAuth tokens from host machine
+- **Credential Management**: Mounting of OAuth tokens from host machine
 - **Modern Shell**: zsh shell with oh-my-zsh plugins (autosuggestions, syntax highlighting) and Starship prompt
 
 ## Architecture
@@ -26,7 +26,6 @@ The firewall implements a **default-deny policy**:
    - npm registry 
    - Claude Code API and authentification services
    - OpenAI API and authentification services
-   - Gemini API and authentification services
    - GitHub
 3. **Blocked**: Everything else
 
@@ -42,9 +41,8 @@ The firewall implements a **default-deny policy**:
 ## Prerequisites
 
 - Docker and Docker Compose
-- Authenticated AI CLI accounts on your host machine:
-  - Codex: `codex` (ChatGPT login)
-  - Gemini: `gemini` (Google account)
+- Claude Code can be authentificated from within container since it allows a headless login: `claude` (Claude login)
+- Codex CLI needs to be authentificated on your host machine: `codex` (ChatGPT login)
 
 ## Quick Start
 
@@ -53,16 +51,14 @@ While it is possible to autheticate Claude Code from within the container, Codex
 ```bash
 # Install and authenticate on your host machine first
 npm install -g @openai/codex
-npm install -g @google/gemini-cli
 
-# Authenticate each
+# Authenticate
 codex
-gemini
 ```
 
-This stores credentials in `~/.codex`, and `~/.gemini`.
+This stores credentials in `~/.codex`.
 
-Optional: Uninstall CLIs from Host if desired but keep `~/.codex` and `~/.gemini`
+Optional: Uninstall CLIs from Host if desired but keep `~/.codex`.
 
 ### 2. Clone and Setup
 ```bash
@@ -82,19 +78,21 @@ docker compose up -d
 docker compose exec docker-sandbox zsh
 ```
 
-### 4. Use AI CLIs
+### 4. Autheticate Claude Code
+Inside the container run
+```bash
+claude 
+```
+and follow instructions to authenticate.
+
+### 5. Use AI CLIs
 Inside the container:
 ```bash
-# Launch Claude Code and authenticate as prompted
-claude 
 # Test Claude Code
 claude -p "review this code"
 
 # Test Codex
 codex "explain this codebase"
-
-# Test Gemini
-gemini -p "what is the purpose of this code?"
 ```
 
 ## Configuration
@@ -119,10 +117,9 @@ volumes:
 Edit `init-firewall.sh` and add domains to the `REQUIRED_DOMAINS` array:
 ```bash
 REQUIRED_DOMAINS=(
-    "registry.npmjs.org"
-    # Claude Code 
+    "registry.npmjs.org" 
+    # Claude Code
     "api.anthropic.com"
-    "sentry.io" 
     ...
     "your-domain.com"  # Add here
 )

@@ -84,9 +84,9 @@ REQUIRED_DOMAINS=(
     "api.openai.com" 
     "chatgpt.com" 
     # Gemini
-    "generativelanguage.googleapis.com" 
-    "accounts.google.com" 
-    "oauth2.googleapis.com" 
+    #"generativelanguage.googleapis.com" 
+    #"accounts.google.com" 
+    #"oauth2.googleapis.com" 
 )
 
 for domain in "${REQUIRED_DOMAINS[@]}"; do

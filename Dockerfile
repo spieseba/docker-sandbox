@@ -76,11 +76,11 @@ RUN mkdir -p /home/ubuntu/.config && starship preset jetpack -o ~/.config/starsh
 # Install Claude Code, Codex, Gemini
 ARG CLAUDE_CODE_VERSION=latest
 ARG CODEX_VERSION=latest
-ARG GEMINI_VERSION=latest
+#ARG GEMINI_VERSION=latest
 
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \ 
-	&& npm install -g @openai/codex@${CODEX_VERSION} \
-	&& npm install -g @google/gemini-cli@${GEMINI_VERSION} 
+RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
+    && npm install -g @openai/codex@${CODEX_VERSION} 
+    #&& npm install -g @google/gemini-cli@${GEMINI_VERSION} 
 
 # Default command
 CMD ["/bin/zsh"]
