@@ -18,8 +18,7 @@ services:
         
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
-      #- ./test-project:/workspace:rw
-      - /Users/sebastian/Projects/WebDev/Webpage:/workspace:rw
+      - ./test-project:/workspace:rw
       # Mount persistent host configs for CLIs
       ## Claude Code
       - ~/.claude:/home/ubuntu/.claude
