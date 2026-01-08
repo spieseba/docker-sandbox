@@ -1,13 +1,13 @@
-# LLM CLI Development Container
+# AI CLI Development Container
 
-A largely secure and isolated Docker environment for experimenting with AI coding assistants including Claude Code, OpenAI Codex, and Google Gemini CLI.
+A Docker container for experimenting with AI coding assistants including Claude Code, OpenAI Codex, and Google Gemini CLI.
 
 ## Purpose
-This container provides a sandboxed environment to explore and test LLM-powered coding tools without compromising your host system's security. It combines filesystem isolation, network restrictions, and a comfortable zsh development environment.
+This container provides a sandboxed environment to explore and test LLM-powered coding tools without compromising your host system's security. It combines filesystem isolation, optional network restrictions, and a comfortable zsh development environment.
 
 ## Key Features
-- **Multi-AI Support**: Pre-configured for Claude Code and Codex CLI. Exentsible to Gemini CLI.
-- **Network Isolation**: Firewall-based whitelist approach (inspired by Anthropic's Claude Code devcontainer)
+- **Multi-AI Support**: Pre-configured for Claude Code, Codex CLI, Gemini CLI
+- **Network Isolation**: Optional firewall whitelist approach (inspired by Anthropic's Claude Code devcontainer)
 - **Filesystem Isolation**: Only explicitly mounted directories are accessible
 - **Credential Management**: Mounting of OAuth tokens from host machine
 - **Modern Shell**: zsh shell with oh-my-zsh plugins (autosuggestions, syntax highlighting) and Starship prompt
@@ -19,15 +19,18 @@ This container provides a sandboxed environment to explore and test LLM-powered 
 - **`docker-compose.yml`**: Container runtime configuration with volume mounts and port forwarding
 - **`init-firewall.sh`**: Network security rules (adapted from [Anthropic's reference implementation](https://github.com/anthropics/claude-code))
 
-### Security Strategy
-The firewall implements a **default-deny policy**:
+### Optional Network Security Strategy
+To handle untrusted code that might exfiltrate an optional firewall can be activated which implements a **default-deny policy**:
 1. **Allowed by default**: DNS (port 53), SSH (port 22), localhost, Docker host network
 2. **Whitelisted domains**: 
    - npm registry 
    - Claude Code API and authentification services
    - OpenAI API and authentification services
+   - Gemini API and authentification
    - GitHub
 3. **Blocked**: Everything else
+
+The whitelisted domains can be adjusted in the `init_firewall.sh` script.
 
 ### File Organization
 ```
@@ -41,24 +44,27 @@ The firewall implements a **default-deny policy**:
 ## Prerequisites
 
 - Docker and Docker Compose
-- Claude Code can be authentificated from within container since it allows a headless login: `claude` (Claude login)
-- Codex CLI needs to be authentificated on your host machine: `codex` (ChatGPT login)
+- Claude Code, Codex, and Gemini CLI logins
 
 ## Quick Start
 
 ### 1. Authenticate CLIs on Host (Linux/macOS)
-While it is possible to autheticate Claude Code from within the container, Codex and Gemini have to be autheticated from the host.
+While it is possible to authenticate Claude Code from within the container, Codex and Gemini have to be autheticated from the host.
 ```bash
 # Install and authenticate on your host machine first
+npm install -g @google/gemini-cli
 npm install -g @openai/codex
 
 # Authenticate
 codex
+gemini
 ```
 
-This stores credentials in `~/.codex`.
+This stores credentials in `~/.codex` and `~/.gemini`.
 
-Optional: Uninstall CLIs from Host if desired but keep `~/.codex`.
+Claude Code can similarly be authenticated from the host. If you chose not to do so and want to mount the credentials, the file `~/claude.json` should be created before starting the container.
+
+Optional: Uninstall CLIs from Host if desired but keep credentials.
 
 ### 2. Clone and Setup
 ```bash
@@ -71,14 +77,16 @@ cd docker-sandbox
 # Build the container
 docker compose build
 
-# Start the container
-docker compose up -d
+# To start the container 
+docker compose up -d sandbox-open # No firewall
+docker compose up -d sandbox-closed # With firewall
 
 # Enter the container
-docker compose exec docker-sandbox zsh
+docker compose exec sandbox-open zsh # No firewall
+docker compose exec sandbox-closed zsh # With firewall
 ```
 
-### 4. Autheticate Claude Code
+### 4. Authenticate Claude Code
 Inside the container run
 ```bash
 claude 
@@ -93,6 +101,9 @@ claude -p "review this code"
 
 # Test Codex
 codex "explain this codebase"
+
+# Test Gemini CLI
+gemini -p "What does this code do?"
 ```
 
 ## Configuration

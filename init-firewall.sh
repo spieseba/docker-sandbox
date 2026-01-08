@@ -5,6 +5,11 @@
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh
 #
 
+# Check if firewall should be enabled
+if [ "$ENABLE_FIREWALL" = "false" ]; then
+    echo "Firewall disabled by ENABLE_FIREWALL=false"
+    exit 0
+fi
 
 set -euo pipefail  # Exit on error, undefined vars, and pipeline failures
 IFS=$'\n\t'       # Stricter word splitting

@@ -1,5 +1,5 @@
 services:
-  docker-sandbox:
+  sandbox-base: &sandbox-base
     build:
       context: .
       dockerfile: Dockerfile
@@ -7,15 +7,9 @@ services:
         TZ: Europe/Berlin
         CLAUDE_CODE_VERSION: latest
         CODEX_VERSION: latest
-        #GEMINI_VERSION: latest
+        GEMINI_VERSION: latest
         ZSH_IN_DOCKER_VERSION: 1.2.0
-    
-    container_name: sandbox
-    
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-        
+
     volumes:
       # Mount current project - CHANGE PATH AS NEEDED!
       - ./test-project:/workspace:rw
@@ -26,15 +20,24 @@ services:
       ## Codex CLI
       - ~/.codex:/home/ubuntu/.codex:rw
       ## Gemini CLI
-      #- ~/.gemini:/home/ubuntu/.gemini:rw
+      - ~/.gemini:/home/ubuntu/.gemini:rw
 
     working_dir: /workspace
     
     stdin_open: true
     tty: true
     
+  # service WITHOUT firewall
+  sandbox-open:
+    <<: *sandbox-base
+    container_name: sandbox-open
+    command: zsh
+
+  # service WITH firewall
+  sandbox-closed:
+    <<: *sandbox-base
+    container_name: sandbox-closed
+    cap_add:
+      - NET_ADMIN
     command: >
-      bash -c "
-      sudo /usr/local/bin/init-firewall.sh &&
-      exec zsh
-      "
+      bash -c "sudo /usr/local/bin/init-firewall.sh && exec zsh" 
