@@ -73,14 +73,19 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 RUN echo 'eval "$(starship init zsh)"' >> ~/.zshrc
 RUN mkdir -p /home/ubuntu/.config && starship preset catppuccin-powerline -o ~/.config/starship.toml
 
-# Install Claude Code, Codex, Gemini
-ARG CLAUDE_CODE_VERSION=latest
-ARG CODEX_VERSION=latest
-ARG GEMINI_VERSION=latest
+# Install uv 
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN echo '. "$HOME/.local/bin/env"' >> ~/.zshrc
 
-RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION} \
-    && npm install -g @openai/codex@${CODEX_VERSION} \
-    && npm install -g @google/gemini-cli@${GEMINI_VERSION} 
+# Install Claude Code
+RUN curl -fsSL https://claude.ai/install.sh | bash 
+
+# Install Gemini
+RUN npm install -g @google/gemini-cli
+
+# Install CODEX
+RUN npm install -g @openai/codex
+
 
 # Default command
 CMD ["/bin/zsh"]

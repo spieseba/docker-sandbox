@@ -24,13 +24,13 @@ To handle untrusted code that might exfiltrate an optional firewall can be activ
 1. **Allowed by default**: DNS (port 53), SSH (port 22), localhost, Docker host network
 2. **Whitelisted domains**: 
    - npm registry 
-   - Claude Code API and authentification services
-   - OpenAI API and authentification services
-   - Gemini API and authentification
+   - Claude Code API and authentication services
+   - OpenAI API and authentication services
+   - Gemini API and authentication services
    - GitHub
 3. **Blocked**: Everything else
 
-The whitelisted domains can be adjusted in the `init_firewall.sh` script.
+The whitelisted domains can be adjusted in the `init-firewall.sh` script.
 
 ### File Organization
 ```
@@ -48,62 +48,64 @@ The whitelisted domains can be adjusted in the `init_firewall.sh` script.
 
 ## Quick Start
 
-### 1. Authenticate CLIs on Host (Linux/macOS)
-While it is possible to authenticate Claude Code from within the container, Codex and Gemini have to be autheticated from the host.
-```bash
-# Install and authenticate on your host machine first
-npm install -g @google/gemini-cli
-npm install -g @openai/codex
+### 1. Create credential files on host (Linux/macOS)
 
-# Authenticate
-codex
-gemini
+Claude Code, Codex, and Gemini can all be authenticated in headless mode from within the container. Credentials are stored in:
+
+| Tool        | Credential location(s)              |
+|-------------|-------------------------------------|
+| Claude Code | `~/.claude/` and `~/.claude.json`   |
+| Codex       | `~/.codex/`                         |
+| Gemini      | `~/.gemini/`                        |
+
+To persist credentials on your host, these paths are mounted into the container.
+
+**Important:** The `~/.claude.json` file must exist on the host before starting the container, otherwise Docker will create a directory with that name instead.
+
+```bash
+touch ~/.claude.json
 ```
 
-This stores credentials in `~/.codex` and `~/.gemini`.
+### 2. Clone and setup
 
-Claude Code can similarly be authenticated from the host. If you chose not to do so and want to mount the credentials, the file `~/claude.json` should be created before starting the container.
-
-Optional: Uninstall CLIs from Host if desired but keep credentials.
-
-### 2. Clone and Setup
 ```bash
 git clone https://github.com/spieseba/docker-sandbox
 cd docker-sandbox
 ```
 
-### 3. Build and Run
+### 3. Build and run
+
 ```bash
 # Build the container
 docker compose build
 
-# To start the container 
-docker compose up -d sandbox-open # No firewall
-docker compose up -d sandbox-closed # With firewall
+# Start the container (choose one)
+docker compose up -d sandbox-open    # Without firewall
+docker compose up -d sandbox-closed  # With firewall
 
 # Enter the container
-docker compose exec sandbox-open zsh # No firewall
-docker compose exec sandbox-closed zsh # With firewall
+docker compose exec sandbox-open zsh    # Without firewall
+docker compose exec sandbox-closed zsh  # With firewall
 ```
 
-### 4. Authenticate Claude Code
-Inside the container run
-```bash
-claude 
-```
-and follow instructions to authenticate.
+### 4. Authenticate CLI tools
 
-### 5. Use AI CLIs
-Inside the container:
+Inside the container, run each tool and follow the authentication prompts:
+
 ```bash
-# Test Claude Code
+claude   # Follow prompts to authenticate
+codex    # Follow prompts to authenticate  
+gemini   # Follow prompts to authenticate
+```
+
+### 5. Use the AI CLIs
+
+Once authenticated, you can use the tools:
+
+```bash
 claude -p "review this code"
-
-# Test Codex
 codex "explain this codebase"
-
-# Test Gemini CLI
-gemini -p "What does this code do?"
+gemini -p "what does this code do?"
 ```
 
 ## Configuration
@@ -147,6 +149,3 @@ This setup is tested on macOS Tahoe (Apple Silicon) and Ubuntu 24.04.
 
 ## License
 This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
-
-## Contributing
-Contributions welcome! Please feel free to submit issues or pull requests.

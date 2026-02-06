@@ -5,21 +5,20 @@ services:
       dockerfile: Dockerfile
       args:
         TZ: Europe/Berlin
-        CLAUDE_CODE_VERSION: latest
-        CODEX_VERSION: latest
-        GEMINI_VERSION: latest
         ZSH_IN_DOCKER_VERSION: 1.2.0
-
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
-      # Mount current project - CHANGE PATH AS NEEDED!
-      - ./test-project:/workspace:rw
+      # Mount current project - Change path as needed
+      #- ./test-project:/workspace:rw
+      - /Users/sebastian/Projects/uni/Chroma/chroma-build:/workspace:rw
       # Mount persistent host configs for CLIs
       ## Claude Code
       - ~/.claude:/home/ubuntu/.claude
       - ~/.claude.json:/home/ubuntu/.claude.json
-      ## Codex CLI
-      - ~/.codex:/home/ubuntu/.codex:rw
-      ## Gemini CLI
+      ### Codex CLI
+      #- ~/.codex:/home/ubuntu/.codex:rw
+      ### Gemini CLI
       - ~/.gemini:/home/ubuntu/.gemini:rw
 
     working_dir: /workspace

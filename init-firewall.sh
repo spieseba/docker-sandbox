@@ -5,12 +5,6 @@
 # https://github.com/anthropics/claude-code/blob/main/.devcontainer/init-firewall.sh
 #
 
-# Check if firewall should be enabled
-if [ "$ENABLE_FIREWALL" = "false" ]; then
-    echo "Firewall disabled by ENABLE_FIREWALL=false"
-    exit 0
-fi
-
 set -euo pipefail  # Exit on error, undefined vars, and pipeline failures
 IFS=$'\n\t'       # Stricter word splitting
 
@@ -89,9 +83,9 @@ REQUIRED_DOMAINS=(
     "api.openai.com" 
     "chatgpt.com" 
     # Gemini
-    #"generativelanguage.googleapis.com" 
-    #"accounts.google.com" 
-    #"oauth2.googleapis.com" 
+    "generativelanguage.googleapis.com" 
+    "accounts.google.com" 
+    "oauth2.googleapis.com" 
 )
 
 for domain in "${REQUIRED_DOMAINS[@]}"; do
