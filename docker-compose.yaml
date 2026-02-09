@@ -10,8 +10,7 @@ services:
       - "host.docker.internal:host-gateway"
     volumes:
       # Mount current project - Change path as needed
-      #- ./test-project:/workspace:rw
-      - /Users/sebastian/Projects/uni/Chroma/chroma-build:/workspace:rw
+      - ./test-project:/workspace:rw
       # Mount persistent host configs for CLIs
       ## Claude Code
       - ~/.claude:/home/ubuntu/.claude
