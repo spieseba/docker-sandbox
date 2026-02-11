@@ -48,7 +48,7 @@ The whitelisted domains can be adjusted in the `init-firewall.sh` script.
 
 ## Quick Start
 
-### 1. Create credential files on host (Linux/macOS)
+### 1. Create credential files and folders on host (Linux/macOS)
 
 Claude Code, Codex, and Gemini can all be authenticated in headless mode from within the container. Credentials are stored in:
 
@@ -58,11 +58,10 @@ Claude Code, Codex, and Gemini can all be authenticated in headless mode from wi
 | Codex       | `~/.codex/`                         |
 | Gemini      | `~/.gemini/`                        |
 
-To persist credentials on your host, these paths are mounted into the container.
-
-**Important:** The `~/.claude.json` file must exist on the host before starting the container, otherwise Docker will create a directory with that name instead.
+To persist credentials on your host, these paths are mounted into the container. They must exist on the host before starting the container, otherwise Docker will create them as root-owned empty directories which may cause permission errors inside the container.
 
 ```bash
+mkdir -p ~/.claude ~/.codex ~/.gemini
 touch ~/.claude.json
 ```
 
