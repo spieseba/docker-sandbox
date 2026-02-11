@@ -79,6 +79,7 @@ RUN echo '. "$HOME/.local/bin/env"' >> ~/.zshrc
 
 # Install Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash 
+
 # Install Mistral vibe
 RUN curl -LsSf https://mistral.ai/vibe/install.sh | bash
 

@@ -13,13 +13,13 @@ services:
       - ./test-project:/workspace:rw
       # Mount persistent host configs for CLIs
       # Claude Code
-      - ~/.claude:/home/ubuntu/.claude
-      - ~/.claude.json:/home/ubuntu/.claude.json
+      - ~/.claude:/home/ubuntu/.claude:rw
+      - ~/.claude.json:/home/ubuntu/.claude.json:rw
       # Mistral Vibe
       - ~/.vibe:/home/ubuntu/.vibe:rw
-      # Codex CLI
+      ## Codex CLI
       - ~/.codex:/home/ubuntu/.codex:rw
-      # Gemini CLI
+      ## Gemini CLI
       - ~/.gemini:/home/ubuntu/.gemini:rw
 
     working_dir: /workspace
