@@ -1,150 +1,114 @@
 # AI CLI Development Container
 
-A Docker container for experimenting with AI coding assistants including Claude Code, OpenAI Codex, and Google Gemini CLI.
+A Docker sandbox for experimenting with AI coding assistants (Claude Code, OpenAI Codex) without giving them access to your host system.
 
-## Purpose
-This container provides a sandboxed environment to explore and test LLM-powered coding tools without compromising your host system's security. It combines filesystem isolation, optional network restrictions, and a comfortable zsh development environment.
+## What this provides
 
-## Key Features
-- **Multi-AI Support**: Pre-configured for Claude Code, Codex CLI, Gemini CLI
-- **Network Isolation**: Optional firewall whitelist approach (inspired by Anthropic's Claude Code devcontainer)
-- **Filesystem Isolation**: Only explicitly mounted directories are accessible
-- **Credential Management**: Mounting of OAuth tokens from host machine
-- **Modern Shell**: zsh shell with oh-my-zsh plugins (autosuggestions, syntax highlighting) and Starship prompt
+- Pre-installed CLIs: Claude Code, Codex
+- Filesystem isolation: only the mounted workspace is visible to the agent
+- Persistent credentials: OAuth tokens mounted from the host so you authenticate once
+- Comfortable shell: zsh with oh-my-zsh plugins and Starship prompt
+- Passwordless `sudo` inside the container for convenience (`apt install`, etc.)
 
-## Architecture
+The container has full internet access. This is a **convenience sandbox**, not a hardened environment — use it for playing with agents on your own projects, not for running untrusted code.
 
-### Core Files
-- **`Dockerfile`**: Defines the container image with Ubuntu 24.04, Node.js 20, and AI CLIs
-- **`docker-compose.yml`**: Container runtime configuration with volume mounts and port forwarding
-- **`init-firewall.sh`**: Network security rules (adapted from [Anthropic's reference implementation](https://github.com/anthropics/claude-code))
-
-### Optional Network Security Strategy
-To handle untrusted code that might exfiltrate an optional firewall can be activated which implements a **default-deny policy**:
-1. **Allowed by default**: DNS (port 53), SSH (port 22), localhost, Docker host network
-2. **Whitelisted domains**: 
-   - npm registry 
-   - Claude Code API and authentication services
-   - OpenAI API and authentication services
-   - Gemini API and authentication services
-   - GitHub
-3. **Blocked**: Everything else
-
-The whitelisted domains can be adjusted in the `init-firewall.sh` script.
-
-### File Organization
+## File layout
 ```
 .
-├── Dockerfile              # Container image definition
-├── docker-compose.yml      # Runtime configuration
-├── init-firewall.sh        # Network security (adapted from Anthropic)
-└── test-project/           # Test project directory containing Python "Hello World!" script.
+├── Dockerfile           # Container image definition
+├── docker-compose.yaml  # Runtime configuration
+└── workspace/           # Mounted into the container at ~/workspace
 ```
 
 ## Prerequisites
 
 - Docker and Docker Compose
-- Claude Code, Codex, and Gemini CLI logins
+- Claude Code and Codex logins
 
-## Quick Start
+## Setup
 
-### 1. Create credential files and folders on host (Linux/macOS)
+### 1. Create credential directories on the host
 
-Claude Code, Codex, and Gemini can all be authenticated in headless mode from within the container. Credentials are stored in:
-
-| Tool        | Credential location(s)              |
-|-------------|-------------------------------------|
-| Claude Code | `~/.claude/` and `~/.claude.json`   |
-| Codex       | `~/.codex/`                         |
-| Gemini      | `~/.gemini/`                        |
-
-To persist credentials on your host, these paths are mounted into the container. They must exist on the host before starting the container, otherwise Docker will create them as root-owned empty directories which may cause permission errors inside the container.
+Credentials are mounted from the host so they survive container rebuilds. These paths must exist before the first `docker compose up`, or Docker will create them as root-owned and cause permission errors:
 
 ```bash
-mkdir -p ~/.claude ~/.codex ~/.gemini
+mkdir -p ~/.claude ~/.codex
 touch ~/.claude.json
 ```
 
-### 2. Clone and setup
+| Tool        | Credential location(s)            |
+|-------------|-----------------------------------|
+| Claude Code | `~/.claude/` and `~/.claude.json` |
+| Codex       | `~/.codex/`                       |
+
+### 2. Clone and build
 
 ```bash
 git clone https://github.com/spieseba/docker-sandbox
 cd docker-sandbox
-```
-
-### 3. Build and run
-
-```bash
-# Build the container
 docker compose build
-
-# Start the container (choose one)
-docker compose up -d sandbox-open    # Without firewall
-docker compose up -d sandbox-closed  # With firewall
-
-# Enter the container
-docker compose exec sandbox-open zsh    # Without firewall
-docker compose exec sandbox-closed zsh  # With firewall
 ```
 
-### 4. Authenticate CLI tools
-
-Inside the container, run each tool and follow the authentication prompts:
+### 3. Start and enter the container
 
 ```bash
-claude   # Follow prompts to authenticate
-codex    # Follow prompts to authenticate  
-gemini   # Follow prompts to authenticate
+docker compose up -d sandbox      # Start (detached, persists)
+docker compose exec sandbox zsh   # Open a shell
 ```
 
-### 5. Use the AI CLIs
+Exit the shell with `exit` or Ctrl-D. The container keeps running; re-enter anytime with `docker compose exec sandbox zsh`.
 
-Once authenticated, you can use the tools:
+To stop and remove the container:
 
 ```bash
+docker compose down
+```
+
+### 4. Authenticate the CLIs (first run only)
+
+Inside the container:
+
+```bash
+claude   # Follow prompts
+codex    # Follow prompts
+```
+
+Credentials are written to the mounted host directories, so you won't need to re-auth after rebuilds.
+
+### 5. Use them
+
+```bash
+cd ~/workspace
 claude -p "review this code"
 codex "explain this codebase"
-gemini -p "what does this code do?"
 ```
 
 ## Configuration
 
-### Timezone
+**Timezone** — edit `docker-compose.yaml`:
 
-Edit `docker-compose.yml`:
 ```yaml
 args:
-  TZ: Europe/Berlin  # Change to your timezone
+  TZ: Europe/Berlin
 ```
 
-### Project Directory
+**Workspace path** — the `./workspace` directory on the host is mounted to `~/workspace` in the container. Put your projects there, or change the mount in `docker-compose.yaml`:
 
-Mount your actual project in `docker-compose.yml`:
 ```yaml
 volumes:
-  - ./test-project:/workspace:rw  # Change to your project path
+  - /path/to/your/project:/home/agent/workspace:rw
 ```
 
-### Adding Whitelisted Domains
-Edit `init-firewall.sh` and add domains to the `REQUIRED_DOMAINS` array:
-```bash
-REQUIRED_DOMAINS=(
-    "registry.npmjs.org" 
-    # Claude Code
-    "api.anthropic.com"
-    ...
-    "your-domain.com"  # Add here
-)
-```
+## Security notes
 
-## Platform-Specific Notes
-This setup is tested on macOS Tahoe (Apple Silicon) and Ubuntu 24.04.
+- The container has broad sudo and full internet access. Don't run untrusted code in it.
+- Credentials are mounted read-write (required for OAuth token refresh), so a misbehaving agent can corrupt or potentially leak them.
+- The container cannot access your host filesystem beyond the mounted workspace and credential directories.
 
-## Security Considerations
-- The firewall provides network isolation but is not impenetrable
-- Only use with trusted codebases and projects
-- Credentials are mounted with read-write access (needed for OAuth token refresh)
-- The `ubuntu` user has limited sudo access (only for running the firewall script)
+## Platform support
+
+Tested on macOS (Apple Silicon) and Ubuntu 24.04.
 
 ## License
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+[MIT](https://opensource.org/licenses/MIT)

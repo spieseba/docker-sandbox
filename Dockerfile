@@ -5,7 +5,7 @@ FROM ubuntu:24.04
 ARG TZ=Europe/Berlin
 ENV TZ=${TZ}
 
-# Install basic development tools and iptables/ipset
+# Install basic development tools 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   less \
   git \
@@ -14,17 +14,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   man-db \
   unzip \
   gnupg2 \
-  iptables \
-  ipset \
-  iproute2 \
-  dnsutils \
-  aggregate \
-  jq \
   vim \
   curl \ 
   wget \
   ca-certificates \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Remove the default ubuntu user and create an agent user with UID 1000
+RUN userdel -r ubuntu 2>/dev/null || true \
+ && groupadd -g 1000 agent \
+ && useradd -m -u 1000 -g 1000 -s /bin/zsh agent
 
 # Install Node.js (Required for Claude Code, Codex CLI, and Gemini CLI)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -36,19 +35,14 @@ RUN curl -fsSL https://starship.rs/install.sh | sh -s -- --yes
 
 # Ensure user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \
-  chown -R ubuntu:ubuntu /usr/local/share
+  chown -R agent:agent /usr/local/share
 
-# Create workspace and set permissions
-RUN mkdir -p /workspace && chown -R ubuntu:ubuntu /workspace
-
-# Copy and configure firewall script 
-COPY init-firewall.sh /usr/local/bin/init-firewall.sh
-RUN chmod +x /usr/local/bin/init-firewall.sh \
-    && echo "ubuntu ALL=(root) NOPASSWD: /usr/local/bin/init-firewall.sh" > /etc/sudoers.d/ubuntu-firewall \
-    && chmod 0440 /etc/sudoers.d/ubuntu-firewall
+# Grant agent user paswordless sudo for all commands
+RUN echo "agent ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/agent \
+    && chmod 0440 /etc/sudoers.d/agent
 
 # Switch to non-root user
-USER ubuntu
+USER agent
 
 # Set working directory
 WORKDIR /workspace
@@ -71,7 +65,7 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # Initialize and configure Starship
 RUN echo 'eval "$(starship init zsh)"' >> ~/.zshrc
-RUN mkdir -p /home/ubuntu/.config && starship preset catppuccin-powerline -o ~/.config/starship.toml
+RUN mkdir -p /home/agent/.config && starship preset catppuccin-powerline -o ~/.config/starship.toml
 
 # Install uv 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -79,14 +73,7 @@ RUN echo '. "$HOME/.local/bin/env"' >> ~/.zshrc
 
 # Install Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash 
-
-# Install Mistral vibe
-RUN curl -LsSf https://mistral.ai/vibe/install.sh | bash
-
-# Install Gemini
-RUN npm install -g @google/gemini-cli
-
-# Install CODEX
+# Install Codex
 RUN npm install -g @openai/codex
 
 

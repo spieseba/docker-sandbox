@@ -1,43 +1,16 @@
 services:
-  sandbox-base: &sandbox-base
+  sandbox:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         TZ: Europe/Berlin
         ZSH_IN_DOCKER_VERSION: 1.2.0
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     volumes:
-      # Mount current project - Change path as needed
-      - ./test-project:/workspace:rw
-      # Mount persistent host configs for CLIs
-      # Claude Code
-      - ~/.claude:/home/ubuntu/.claude:rw
-      - ~/.claude.json:/home/ubuntu/.claude.json:rw
-      # Mistral Vibe
-      - ~/.vibe:/home/ubuntu/.vibe:rw
-      ## Codex CLI
-      - ~/.codex:/home/ubuntu/.codex:rw
-      ## Gemini CLI
-      - ~/.gemini:/home/ubuntu/.gemini:rw
-
-    working_dir: /workspace
-    
+      - ./workspace:/home/agent/workspace:rw
+      - ~/.claude:/home/agent/.claude:rw
+      - ~/.claude.json:/home/agent/.claude.json:rw
+      - ~/.codex:/home/agent/.codex:rw 
     stdin_open: true
     tty: true
-    
-  # service WITHOUT firewall
-  sandbox-open:
-    <<: *sandbox-base
-    container_name: sandbox-open
-    command: zsh
-
-  # service WITH firewall
-  sandbox-closed:
-    <<: *sandbox-base
-    container_name: sandbox-closed
-    cap_add:
-      - NET_ADMIN
-    command: >
-      bash -c "sudo /usr/local/bin/init-firewall.sh && exec zsh" 
+    command: zsh 
