@@ -1,3 +1,5 @@
-# Ignore helper scripts
-rebuild.sh
-start.sh
+# Don't track content of workspace but keep folder
+workspace/*
+!workspace/.gitkeep
+
+

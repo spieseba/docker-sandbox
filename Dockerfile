@@ -45,7 +45,7 @@ RUN echo "agent ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/agent \
 USER agent
 
 # Set working directory
-WORKDIR /workspace
+WORKDIR /home/agent/workspace
 
 # Set up environment for user
 ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
