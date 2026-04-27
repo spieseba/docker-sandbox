@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   curl \ 
   wget \
   ca-certificates \
+  texlive-full \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Remove the default ubuntu user and create an agent user with UID 1000
@@ -65,7 +66,7 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # Initialize and configure Starship
 RUN echo 'eval "$(starship init zsh)"' >> ~/.zshrc
-RUN mkdir -p /home/agent/.config && starship preset catppuccin-powerline -o ~/.config/starship.toml
+RUN mkdir -p /home/agent/.config && starship preset tokyo-night -o ~/.config/starship.toml
 
 # Install uv 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
