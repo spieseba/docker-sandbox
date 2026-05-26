@@ -8,6 +8,8 @@ services:
       args:
         TZ: Europe/Berlin
         ZSH_IN_DOCKER_VERSION: 1.2.0
+    security_opt:
+      - label=disable
     volumes:
       - ./workspace:/home/agent/workspace:rw
       - ~/.claude:/home/agent/.claude:rw
