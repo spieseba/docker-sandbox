@@ -14,7 +14,9 @@ services:
       - ./workspace:/home/agent/workspace:rw
       - ~/.claude:/home/agent/.claude:rw
       - ~/.claude.json:/home/agent/.claude.json:rw
-      - ~/.codex:/home/agent/.codex:rw 
+      - ~/.codex:/home/agent/.codex:rw
+      - ~/.gemini:/home/agent/.gemini:rw
+      - ~/.vibe:/home/agent/.vibe:rw
     stdin_open: true
     tty: true
     command: zsh 

@@ -18,7 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   curl \ 
   wget \
   ca-certificates \
-  texlive-full \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Remove the default ubuntu user and create an agent user with UID 1000
@@ -50,7 +49,7 @@ WORKDIR /home/agent/workspace
 
 # Set up environment for user
 ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
-ENV PATH=$PATH:/usr/local/share/npm-global/bin
+ENV PATH=$PATH:/usr/local/share/npm-global/bin:/home/agent/.local/bin
 ENV SHELL=/bin/zsh
 ENV EDITOR=vim
 ENV VISUAL=vim
@@ -70,12 +69,16 @@ RUN mkdir -p /home/agent/.config && starship preset tokyo-night -o ~/.config/sta
 
 # Install uv 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-RUN echo '. "$HOME/.local/bin/env"' >> ~/.zshrc
+RUN echo '[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"' >> ~/.zshrc
 
 # Install Claude Code
 RUN curl -fsSL https://claude.ai/install.sh | bash 
 # Install Codex
 RUN npm install -g @openai/codex
+# Install Antigravity CLI
+RUN curl -fsSL https://antigravity.google/cli/install.sh | bash 
+# Install Mistral Vibe CLI
+RUN curl -LsSf https://mistral.ai/vibe/install.sh | bash
 
 
 # Default command

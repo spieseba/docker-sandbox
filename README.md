@@ -1,10 +1,10 @@
 # AI CLI Development Container
 
-A Docker sandbox for experimenting with AI coding assistants (Claude Code, OpenAI Codex) without giving them access to your host system.
+A Docker sandbox for experimenting with AI coding assistants without giving them access to your host system.
 
 ## What this provides
 
-- Pre-installed CLIs: Claude Code, Codex
+- Pre-installed CLIs: Claude Code, Codex, Mistral Vibe, Antigravity CLI - remove in Dockerfile as desired
 - Filesystem isolation: only the mounted workspace is visible to the agent
 - Persistent credentials: OAuth tokens mounted from the host so you authenticate once
 - Comfortable shell: zsh with oh-my-zsh plugins and Starship prompt
@@ -32,14 +32,16 @@ The container has full internet access. This is a **convenience sandbox**, not a
 Credentials are mounted from the host so they survive container rebuilds. These paths must exist before the first `docker compose up`, or Docker will create them as root-owned and cause permission errors:
 
 ```bash
-mkdir -p ~/.claude ~/.codex
+mkdir -p ~/.claude ~/.codex ~/.gemini ~/.vibe
 touch ~/.claude.json
 ```
 
-| Tool        | Credential location(s)            |
-|-------------|-----------------------------------|
-| Claude Code | `~/.claude/` and `~/.claude.json` |
-| Codex       | `~/.codex/`                       |
+| Tool            | Credential location(s)            |
+|-----------------|-----------------------------------|
+| Claude Code     | `~/.claude/` and `~/.claude.json` |
+| Codex           | `~/.codex/`                       |
+| Antigravity CLI | `~/.gemini/`                      |
+| Mistral Vibe    | `~/.vibe/`                        |
 
 ### 2. Clone and build
 
@@ -70,7 +72,6 @@ Inside the container:
 
 ```bash
 claude   # Follow prompts
-codex    # Follow prompts
 ```
 
 Credentials are written to the mounted host directories, so you won't need to re-auth after rebuilds.
@@ -79,8 +80,7 @@ Credentials are written to the mounted host directories, so you won't need to re
 
 ```bash
 cd ~/workspace
-claude -p "review this code"
-codex "explain this codebase"
+claude 
 ```
 
 ## Configuration
@@ -107,7 +107,7 @@ volumes:
 
 ## Platform support
 
-Tested on macOS (Apple Silicon) and Ubuntu 24.04.
+Tested on macOS Tahoe 26.5 (Apple Silicon) and Fedora 44.
 
 ## License
 
