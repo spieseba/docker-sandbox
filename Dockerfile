@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   curl \ 
   wget \
   ca-certificates \
+  jq \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Remove the default ubuntu user and create an agent user with UID 1000
