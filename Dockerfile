@@ -66,7 +66,7 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 
 # Initialize and configure Starship
 RUN echo 'eval "$(starship init zsh)"' >> ~/.zshrc
-RUN mkdir -p /home/agent/.config && starship preset tokyo-night -o ~/.config/starship.toml
+RUN mkdir -p /home/agent/.config && starship preset pure-preset -o ~/.config/starship.toml
 
 # Install uv 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
