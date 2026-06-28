@@ -82,5 +82,10 @@ RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
  && ln -sf /home/agent/.agent-config/skills /home/agent/.vibe/skills
 
 
+# Install the Codex plugin for Claude Code (non-interactive, no auth needed).
+# After the agent-config block so it writes through the settings.json symlink.
+RUN claude plugin marketplace add openai/codex-plugin-cc \
+ && claude plugin install codex@openai-codex
+
 # Default command
 CMD ["/bin/bash"]
