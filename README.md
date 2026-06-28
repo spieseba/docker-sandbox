@@ -9,7 +9,7 @@ without giving them access to your host system.
 - Pre-installed CLIs: Claude Code, Codex, Mistral Vibe, Antigravity CLI — remove in Dockerfile as desired
 - Filesystem isolation: only the mounted workspace is visible to the agent
 - Self-contained: no host credentials or config are mounted in; authenticate inside the container
-- Baked-in agent config: AGENTS.md/CLAUDE.md, shared skills, and the Claude Code statusline are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into all four CLIs
+- Baked-in agent config: AGENTS.md/CLAUDE.md, shared skills, and the Claude Code and Codex statuslines are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into all four CLIs
 - Passwordless `sudo` inside the container for convenience (`apt install`, etc.)
 
 The container has full internet access. This is a **convenience sandbox**, not a
@@ -95,7 +95,7 @@ volumes:
   - /path/to/your/project:/home/agent/workspace:rw
 ```
 
-**Agent config** — AGENTS.md, skills, and the statusline come from
+**Agent config** — AGENTS.md, skills, and statuslines come from
 [spieseba/agent-config](https://github.com/spieseba/agent-config), cloned into
 `~/.agent-config` at build time and symlinked into each CLI's config dir. To use
 a fork, override the build arg:

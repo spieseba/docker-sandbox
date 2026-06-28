@@ -61,7 +61,7 @@ RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
 # Install Mistral Vibe CLI
 RUN curl -LsSf https://mistral.ai/vibe/install.sh | bash
 
-# Install personal agent config (AGENTS.md/CLAUDE.md, skills, Claude Code statusline).
+# Install personal agent config (AGENTS.md/CLAUDE.md, skills, statuslines).
 # Public repo -> HTTPS clone needs no credentials. Cloned (not copied) so it stays
 # updatable in-container via `git -C ~/.agent-config pull`. Lives outside the mounted
 # workspace, which would otherwise shadow build-time files at runtime.
@@ -72,12 +72,10 @@ RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
  && ln -sf /home/agent/.agent-config/skills /home/agent/.claude/skills \
  && ln -sf /home/agent/.agent-config/claude/statusline-command.sh /home/agent/.claude/statusline-command.sh \
  && chmod +x /home/agent/.agent-config/claude/statusline-command.sh \
- && printf '%s\n' \
-      '{' \
-      '  "statusLine": { "type": "command", "command": "~/.claude/statusline-command.sh" }' \
-      '}' > /home/agent/.claude/settings.json \
+ && ln -sf /home/agent/.agent-config/claude/settings.json /home/agent/.claude/settings.json \
  && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.codex/AGENTS.md \
  && ln -sf /home/agent/.agent-config/skills /home/agent/.codex/skills \
+ && ln -sf /home/agent/.agent-config/codex/config.toml /home/agent/.codex/config.toml \
  && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.gemini/GEMINI.md \
  && ln -sf /home/agent/.agent-config/skills /home/agent/.gemini/skills \
  && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.vibe/AGENTS.md \
