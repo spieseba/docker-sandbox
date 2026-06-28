@@ -10,6 +10,7 @@ without giving them access to your host system.
 - Filesystem isolation: only the mounted workspace is visible to the agent
 - Self-contained: no host credentials or config are mounted in; authenticate inside the container
 - Baked-in agent config: AGENTS.md/CLAUDE.md, shared skills, and the Claude Code and Codex statuslines are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into all four CLIs
+- The [Codex plugin for Claude Code](https://github.com/spieseba/agent-config#codex-plugin-for-claude-code) is installed automatically at build time
 - Passwordless `sudo` inside the container for convenience (`apt install`, etc.)
 
 The container has full internet access. This is a **convenience sandbox**, not a
