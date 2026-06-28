@@ -71,6 +71,7 @@ RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
  && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.claude/CLAUDE.md \
  && ln -sf /home/agent/.agent-config/skills /home/agent/.claude/skills \
  && ln -sf /home/agent/.agent-config/claude/statusline-command.sh /home/agent/.claude/statusline-command.sh \
+ && chmod +x /home/agent/.agent-config/claude/statusline-command.sh \
  && printf '%s\n' \
       '{' \
       '  "statusLine": { "type": "command", "command": "~/.claude/statusline-command.sh" }' \
