@@ -7,16 +7,10 @@ services:
       dockerfile: Dockerfile
       args:
         TZ: Europe/Berlin
-        ZSH_IN_DOCKER_VERSION: 1.2.0
     security_opt:
       - label=disable
     volumes:
       - ./workspace:/home/agent/workspace:rw
-      - ~/.claude:/home/agent/.claude:rw
-      - ~/.claude.json:/home/agent/.claude.json:rw
-      - ~/.codex:/home/agent/.codex:rw
-      - ~/.gemini:/home/agent/.gemini:rw
-      - ~/.vibe:/home/agent/.vibe:rw
     stdin_open: true
     tty: true
-    command: zsh 
+    command: bash

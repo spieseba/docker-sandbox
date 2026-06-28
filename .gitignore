@@ -2,4 +2,7 @@
 workspace/*
 !workspace/.gitkeep
 
+# MacOS
+.DS_Store
+
 
