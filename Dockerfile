@@ -1,12 +1,12 @@
-# Use Ubuntu 24.04 as base
-FROM ubuntu:24.04
+# Use Fedora as base
+FROM fedora
 
 # Set timezone
 ARG TZ=Europe/Berlin
 ENV TZ=${TZ}
 
-# Install basic development tools 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install basic development tools (nodejs/npm required for Codex CLI)
+RUN dnf install -y --setopt=install_weak_deps=False --allowerasing \
   less \
   git \
   sudo \
@@ -14,22 +14,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   unzip \
   gnupg2 \
   vim \
-  curl \ 
+  curl \
   wget \
   ca-certificates \
   jq \
   bubblewrap \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
+  hostname \
+  nodejs \
+  npm \
+  && dnf clean all
 
-# Remove the default ubuntu user and create an agent user with UID 1000
-RUN userdel -r ubuntu 2>/dev/null || true \
- && groupadd -g 1000 agent \
+# Create an agent user with UID 1000 (Fedora base has no default non-root user)
+RUN groupadd -g 1000 agent \
  && useradd -m -u 1000 -g 1000 -s /bin/bash agent
-
-# Install Node.js (Required for Claude Code, Codex CLI, and Gemini CLI)
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
 
 # Ensure user has access to /usr/local/share
 RUN mkdir -p /usr/local/share/npm-global && \

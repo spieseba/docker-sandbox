@@ -5,6 +5,7 @@ without giving them access to your host system.
 
 ## What this provides
 
+- Built on the latest Fedora base image
 - Pre-installed CLIs: Claude Code, Codex, Mistral Vibe, Antigravity CLI — remove in Dockerfile as desired
 - Filesystem isolation: only the mounted workspace is visible to the agent
 - Self-contained: no host credentials or config are mounted in; authenticate inside the container
