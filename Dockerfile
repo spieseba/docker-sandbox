@@ -62,9 +62,6 @@ RUN curl -fsSL https://antigravity.google/cli/install.sh | bash
 RUN curl -LsSf https://mistral.ai/vibe/install.sh | bash
 
 # Install personal agent config (AGENTS.md/CLAUDE.md, skills, statuslines).
-# Public repo -> HTTPS clone needs no credentials. Cloned (not copied) so it stays
-# updatable in-container via `git -C ~/.agent-config pull`. Lives outside the mounted
-# workspace, which would otherwise shadow build-time files at runtime.
 ARG AGENT_CONFIG_REPO=https://github.com/spieseba/agent-config.git
 RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
  && mkdir -p /home/agent/.claude /home/agent/.codex /home/agent/.gemini /home/agent/.vibe \
@@ -81,11 +78,6 @@ RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
  && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.vibe/AGENTS.md \
  && ln -sf /home/agent/.agent-config/skills /home/agent/.vibe/skills
 
-
-# Install the Codex plugin for Claude Code (non-interactive, no auth needed).
-# After the agent-config block so it writes through the settings.json symlink.
-RUN claude plugin marketplace add openai/codex-plugin-cc \
- && claude plugin install codex@openai-codex
 
 # Default command
 CMD ["/bin/bash"]
