@@ -125,8 +125,8 @@ Update it live inside the container with `git -C ~/.agent-config pull`.
 - The container has broad sudo and full internet access. Don't run untrusted code in it.
 - SELinux labeling is disabled for the container (`security_opt: label=disable`
   in `docker-compose.yaml`) so the workspace mount works out of the box on
-  SELinux hosts (e.g. Fedora). Filesystem isolation still holds — it relies on
-  namespaces, not SELinux — but this removes SELinux as an extra confinement
+  SELinux hosts (e.g. Fedora). Filesystem isolation still holds. It relies on
+  namespaces, not SELinux. But this removes SELinux as an extra confinement
   layer.
 - No host credentials or config are mounted, so the container cannot leak them.
 - The container cannot access your host filesystem beyond the mounted workspace.
