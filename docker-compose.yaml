@@ -1,16 +1,32 @@
+# Shared configuration
+x-base-service: &base-service
+  image: docker-sandbox
+  build:
+    context: .
+    dockerfile: Dockerfile
+    args:
+      TZ: Europe/Berlin
+  security_opt:
+    - label=disable
+  volumes:
+    - ./workspace:/home/agent/workspace:rw
+  stdin_open: true
+  tty: true
+  command: bash
+
 services:
+  # CPU-only 
   sandbox:
+    <<: *base-service
     container_name: sandbox
-    image: docker-sandbox
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        TZ: Europe/Berlin
-    security_opt:
-      - label=disable
-    volumes:
-      - ./workspace:/home/agent/workspace:rw
-    stdin_open: true
-    tty: true
-    command: bash
+  # GPU-enabled 
+  sandbox-gpu:
+    <<: *base-service
+    container_name: sandbox-gpu
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

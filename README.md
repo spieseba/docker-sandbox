@@ -10,7 +10,8 @@ without giving them access to your host system.
 - Filesystem isolation: only the mounted workspace is visible to the agent
 - Self-contained: no host credentials or config are mounted in; authenticate inside the container
 - Baked-in agent config: AGENTS.md/CLAUDE.md, shared skills, and the Claude Code and Codex statuslines are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into all four CLIs
-- Passwordless `sudo` inside the container for convenience (`apt install`, etc.)
+- Two service variants: CPU-only (`sandbox`) and GPU-enabled (`sandbox-gpu`)
+- Passwordless `sudo` inside the container for convenience (`dnf install`, etc.)
 
 The container has full internet access. This is a **convenience sandbox**, not a
 hardened environment — use it for playing with agents on your own projects, not
@@ -27,6 +28,9 @@ for running untrusted code.
 ## Prerequisites
 
 - Docker and Docker Compose
+- For `sandbox-gpu` only: an NVIDIA GPU with drivers and the
+  [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+  installed on the host
 
 ## Setup
 
@@ -40,15 +44,24 @@ docker compose build
 
 ### 2. Start and enter the container
 
+Two services share the same image:
+
+- `sandbox` — CPU-only
+- `sandbox-gpu` — passes an NVIDIA GPU through to the container (see
+  [Prerequisites](#prerequisites))
+
 ```bash
 docker compose up -d sandbox      # Start (detached, persists)
 docker compose exec sandbox bash  # Open a shell
 ```
 
+For the GPU variant, use `sandbox-gpu` instead of `sandbox` in both commands.
+Verify GPU access inside the container with `nvidia-smi`.
+
 Exit the shell with `exit` or Ctrl-D. The container keeps running; re-enter
 anytime with `docker compose exec sandbox bash`.
 
-To stop and remove the container:
+To stop and remove the container(s):
 
 ```bash
 docker compose down
@@ -60,7 +73,7 @@ The sandbox is self-contained, so credentials are **not** mounted from the host.
 Authenticate inside the container:
 
 ```bash
-claude   # Follow prompts; likewise: codex, vibe, antigravity
+claude   # Follow prompts; likewise: codex, vibe, agy
 ```
 
 > **Note:** Because nothing is mounted into the CLI config directories, logins
@@ -110,12 +123,18 @@ Update it live inside the container with `git -C ~/.agent-config pull`.
 ## Security notes
 
 - The container has broad sudo and full internet access. Don't run untrusted code in it.
+- SELinux labeling is disabled for the container (`security_opt: label=disable`
+  in `docker-compose.yaml`) so the workspace mount works out of the box on
+  SELinux hosts (e.g. Fedora). Filesystem isolation still holds — it relies on
+  namespaces, not SELinux — but this removes SELinux as an extra confinement
+  layer.
 - No host credentials or config are mounted, so the container cannot leak them.
 - The container cannot access your host filesystem beyond the mounted workspace.
 
 ## Platform support
 
-Tested on macOS Tahoe 26.5 (Apple Silicon) and Fedora 44.
+Tested on macOS Tahoe 26.5 (Apple Silicon) and Fedora 44. The `sandbox-gpu`
+service requires an NVIDIA GPU and is therefore Linux-only.
 
 ## License
 
