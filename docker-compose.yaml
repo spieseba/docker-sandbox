@@ -6,6 +6,10 @@ x-base-service: &base-service
     dockerfile: Dockerfile
     args:
       TZ: Europe/Berlin
+      # Opt-in CLIs — only Claude Code and Mistral Vibe are installed by default.
+      # Uncomment to include, then rebuild:
+      # INSTALL_CODEX: "true"
+      # INSTALL_ANTIGRAVITY: "true"
   security_opt:
     - label=disable
   volumes:

@@ -6,10 +6,10 @@ without giving them access to your host system.
 ## What this provides
 
 - Built on the latest Fedora base image
-- Pre-installed CLIs: Claude Code, Codex, Mistral Vibe, Antigravity CLI — remove in Dockerfile as desired
+- Pre-installed CLIs: Claude Code and Mistral Vibe; Codex and Antigravity CLI are opt-in build args (see [Configuration](#configuration))
 - Filesystem isolation: only the mounted workspace is visible to the agent
 - Self-contained: no host credentials or config are mounted in; authenticate inside the container
-- Baked-in agent config: AGENTS.md/CLAUDE.md, shared skills, and the Claude Code and Codex statuslines are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into all four CLIs
+- Baked-in agent config: AGENTS.md/CLAUDE.md, shared skills, and statuslines are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into each installed CLI
 - Two service variants: CPU-only (`sandbox`) and GPU-enabled (`sandbox-gpu`)
 - Passwordless `sudo` inside the container for convenience (`dnf install`, etc.)
 
@@ -73,7 +73,7 @@ The sandbox is self-contained, so credentials are **not** mounted from the host.
 Authenticate inside the container:
 
 ```bash
-claude   # Follow prompts; likewise: codex, vibe, agy
+claude   # Follow prompts; likewise: vibe (and codex / agy if enabled)
 ```
 
 > **Note:** Because nothing is mounted into the CLI config directories, logins
@@ -91,6 +91,16 @@ claude
 ```
 
 ## Configuration
+
+**Optional CLIs** — only Claude Code and Mistral Vibe are installed by default.
+To add Codex and/or Antigravity, uncomment the build args in
+`docker-compose.yaml` and rebuild:
+
+```yaml
+args:
+  INSTALL_CODEX: "true"
+  INSTALL_ANTIGRAVITY: "true"
+```
 
 **Timezone** — edit `docker-compose.yaml`:
 
