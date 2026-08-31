@@ -92,14 +92,16 @@ claude
 
 ## Configuration
 
-**Optional CLIs** — only Claude Code and Mistral Vibe are installed by default.
-To add Codex and/or Antigravity, uncomment the build args in
-`docker-compose.yaml` and rebuild:
+**Optional CLIs** — all four CLIs are build args in `docker-compose.yaml`.
+Claude Code and Mistral Vibe are on by default; comment them out to disable.
+Codex and Antigravity are opt-in — uncomment to include. Rebuild after changing:
 
 ```yaml
 args:
-  INSTALL_CODEX: "true"
-  INSTALL_ANTIGRAVITY: "true"
+  INSTALL_CLAUDE: "true"
+  INSTALL_VIBE: "true"
+  # INSTALL_CODEX: "true"
+  # INSTALL_ANTIGRAVITY: "true"
 ```
 
 **Timezone** — edit `docker-compose.yaml`:

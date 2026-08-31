@@ -5,7 +5,10 @@ FROM fedora
 ARG TZ=Europe/Berlin
 ENV TZ=${TZ}
 
-# Optional CLIs — opt in at build time (see docker-compose.yaml args)
+# Optional CLIs — toggled at build time (see docker-compose.yaml args).
+# Claude Code and Mistral Vibe are on by default; Codex and Antigravity opt-in.
+ARG INSTALL_CLAUDE=true
+ARG INSTALL_VIBE=true
 ARG INSTALL_CODEX=false
 ARG INSTALL_ANTIGRAVITY=false
 
@@ -60,9 +63,9 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 RUN echo '[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"' >> ~/.bashrc
 
 # Install Claude Code
-RUN curl -fsSL https://claude.ai/install.sh | bash
+RUN if [ "$INSTALL_CLAUDE" = "true" ]; then curl -fsSL https://claude.ai/install.sh | bash; fi
 # Install Mistral Vibe CLI
-RUN curl -LsSf https://mistral.ai/vibe/install.sh | bash
+RUN if [ "$INSTALL_VIBE" = "true" ]; then curl -LsSf https://mistral.ai/vibe/install.sh | bash; fi
 # Install Codex (opt in)
 RUN if [ "$INSTALL_CODEX" = "true" ]; then npm install -g @openai/codex; fi
 # Install Antigravity CLI (opt in)
@@ -71,19 +74,23 @@ RUN if [ "$INSTALL_ANTIGRAVITY" = "true" ]; then curl -fsSL https://antigravity.
 # Install personal agent config (AGENTS.md/CLAUDE.md, skills, statuslines).
 ARG AGENT_CONFIG_REPO=https://github.com/spieseba/agent-config.git
 RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
- && mkdir -p /home/agent/.claude /home/agent/.vibe \
- && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.claude/CLAUDE.md \
- && ln -sf /home/agent/.agent-config/skills /home/agent/.claude/skills \
- && ln -sf /home/agent/.agent-config/claude/statusline-command.sh /home/agent/.claude/statusline-command.sh \
- && chmod +x /home/agent/.agent-config/claude/statusline-command.sh \
- && ln -sf /home/agent/.agent-config/claude/settings.json /home/agent/.claude/settings.json \
- && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.vibe/AGENTS.md \
- && ln -sf /home/agent/.agent-config/skills /home/agent/.vibe/skills \
+ && if [ "$INSTALL_CLAUDE" = "true" ]; then \
+      mkdir -p /home/agent/.claude \
+      && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.claude/CLAUDE.md \
+      && ln -sf /home/agent/.agent-config/skills /home/agent/.claude/skills \
+      && ln -sf /home/agent/.agent-config/claude/statusline-command.sh /home/agent/.claude/statusline-command.sh \
+      && chmod +x /home/agent/.agent-config/claude/statusline-command.sh \
+      && ln -sf /home/agent/.agent-config/claude/settings.json /home/agent/.claude/settings.json; \
+    fi \
+ && if [ "$INSTALL_VIBE" = "true" ]; then \
+      mkdir -p /home/agent/.vibe \
+      && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.vibe/AGENTS.md \
+      && ln -sf /home/agent/.agent-config/skills /home/agent/.vibe/skills; \
+    fi \
  && if [ "$INSTALL_CODEX" = "true" ]; then \
       mkdir -p /home/agent/.codex \
       && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.codex/AGENTS.md \
       && ln -sf /home/agent/.agent-config/skills /home/agent/.codex/skills \
-      && ln -sf /home/agent/.agent-config/codex/config.toml /home/agent/.codex/config.toml; \
     fi \
  && if [ "$INSTALL_ANTIGRAVITY" = "true" ]; then \
       mkdir -p /home/agent/.gemini \
