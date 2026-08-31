@@ -90,7 +90,7 @@ RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
  && if [ "$INSTALL_CODEX" = "true" ]; then \
       mkdir -p /home/agent/.codex \
       && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.codex/AGENTS.md \
-      && ln -sf /home/agent/.agent-config/skills /home/agent/.codex/skills \
+      && ln -sf /home/agent/.agent-config/skills /home/agent/.codex/skills; \
     fi \
  && if [ "$INSTALL_ANTIGRAVITY" = "true" ]; then \
       mkdir -p /home/agent/.gemini \
