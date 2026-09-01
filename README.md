@@ -9,7 +9,7 @@ without giving them access to your host system.
 - Pre-installed CLIs: Claude Code and Mistral Vibe; Codex and Antigravity CLI are opt-in build args (see [Configuration](#configuration))
 - Filesystem isolation: only the mounted workspace is visible to the agent
 - Self-contained: no host credentials or config are mounted in; authenticate inside the container
-- Baked-in agent config: AGENTS.md/CLAUDE.md, shared skills, and statuslines are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into each installed CLI
+- Baked-in agent config: instructions, shared skills, CLI settings, and statuslines are pulled from [spieseba/agent-config](https://github.com/spieseba/agent-config) at build time and wired into each installed CLI
 - Two service variants: CPU-only (`sandbox`) and GPU-enabled (`sandbox-gpu`)
 - Passwordless `sudo` inside the container for convenience (`dnf install`, etc.)
 
@@ -120,9 +120,9 @@ volumes:
   - /path/to/your/project:/home/agent/workspace:rw
 ```
 
-**Agent config** — AGENTS.md, skills, and statuslines come from
+**Agent config** — instructions, skills, CLI settings, and statuslines come from
 [spieseba/agent-config](https://github.com/spieseba/agent-config), cloned into
-`~/.agent-config` at build time and symlinked into each CLI's config dir. To use
+`~/.agent-config` at build time and installed into each CLI's config dir. To use
 a fork, override the build arg:
 
 ```yaml
@@ -130,7 +130,8 @@ args:
   AGENT_CONFIG_REPO: https://github.com/you/your-agent-config.git
 ```
 
-Update it live inside the container with `git -C ~/.agent-config pull`.
+`git -C ~/.agent-config pull` updates symlinked instructions and skills live.
+Rebuild the image to refresh copied CLI settings and scripts.
 
 ## Security notes
 

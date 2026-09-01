@@ -78,19 +78,21 @@ RUN git clone --depth 1 "${AGENT_CONFIG_REPO}" /home/agent/.agent-config \
       mkdir -p /home/agent/.claude \
       && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.claude/CLAUDE.md \
       && ln -sf /home/agent/.agent-config/skills /home/agent/.claude/skills \
-      && ln -sf /home/agent/.agent-config/claude/statusline-command.sh /home/agent/.claude/statusline-command.sh \
-      && chmod +x /home/agent/.agent-config/claude/statusline-command.sh \
-      && ln -sf /home/agent/.agent-config/claude/settings.json /home/agent/.claude/settings.json; \
+      && cp /home/agent/.agent-config/claude/statusline-command.sh /home/agent/.claude/statusline-command.sh \
+      && chmod +x /home/agent/.claude/statusline-command.sh \
+      && cp /home/agent/.agent-config/claude/settings.json /home/agent/.claude/settings.json; \
     fi \
  && if [ "$INSTALL_VIBE" = "true" ]; then \
       mkdir -p /home/agent/.vibe \
       && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.vibe/AGENTS.md \
-      && ln -sf /home/agent/.agent-config/skills /home/agent/.vibe/skills; \
+      && ln -sf /home/agent/.agent-config/skills /home/agent/.vibe/skills \
+      && cp /home/agent/.agent-config/vibe/config.toml /home/agent/.vibe/config.toml; \
     fi \
  && if [ "$INSTALL_CODEX" = "true" ]; then \
       mkdir -p /home/agent/.codex \
       && ln -sf /home/agent/.agent-config/AGENTS.md /home/agent/.codex/AGENTS.md \
-      && ln -sf /home/agent/.agent-config/skills /home/agent/.codex/skills; \
+      && ln -sf /home/agent/.agent-config/skills /home/agent/.codex/skills \
+      && cp /home/agent/.agent-config/codex/config.toml /home/agent/.codex/config.toml; \
     fi \
  && if [ "$INSTALL_ANTIGRAVITY" = "true" ]; then \
       mkdir -p /home/agent/.gemini \
