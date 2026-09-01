@@ -66,9 +66,9 @@ RUN echo '[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"' >> ~/.bashr
 RUN if [ "$INSTALL_CLAUDE" = "true" ]; then curl -fsSL https://claude.ai/install.sh | bash; fi
 # Install Mistral Vibe CLI
 RUN if [ "$INSTALL_VIBE" = "true" ]; then curl -LsSf https://mistral.ai/vibe/install.sh | bash; fi
-# Install Codex (opt in)
+# Install Codex
 RUN if [ "$INSTALL_CODEX" = "true" ]; then npm install -g @openai/codex; fi
-# Install Antigravity CLI (opt in)
+# Install Antigravity CLI
 RUN if [ "$INSTALL_ANTIGRAVITY" = "true" ]; then curl -fsSL https://antigravity.google/cli/install.sh | bash; fi
 
 # Install personal agent config (AGENTS.md/CLAUDE.md, skills, statuslines).
