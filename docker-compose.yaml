@@ -6,13 +6,13 @@ x-base-service: &base-service
     dockerfile: Dockerfile
     args:
       TZ: Europe/Berlin
-      # CLI build args. Claude Code and Mistral Vibe are on by default —
-      # comment out to disable. Codex and Antigravity are opt-in — uncomment
-      # to include. Rebuild after changing.
+      # CLI build args. 
+      # Claude Code, Mistral Vibe, Codex, and Antigravity are on by default 
+      # comment out to disable. Rebuild after changing.
       INSTALL_CLAUDE: "true"
       INSTALL_VIBE: "true"
-      # INSTALL_CODEX: "true"
-      # INSTALL_ANTIGRAVITY: "true"
+      INSTALL_CODEX: "true"
+      INSTALL_ANTIGRAVITY: "true"
   security_opt:
     - label=disable
   volumes:
